@@ -22,7 +22,6 @@ set expandtab
 set scrolloff=3
 
 set backspace=indent,eol,start " can delete eol ect.
-
 set hidden "no promote for buffer shift
 
 "---------------------
@@ -44,6 +43,13 @@ endif
 
 if has("nvim") " detect neovim env
 endif
+
+let mapleader = "\<space>"
+" copy and paste form system
+vmap <C-S-c> "+yi
+vmap <C-S-x> "+c
+vmap <C-S-v> c<ESC>"+p
+imap <C-S-v> <C-r><C-o>+
 
 "---------------------
 " plugin
@@ -73,7 +79,12 @@ set updatetime=100 " update gitgutter info latency in term of ms
 let g:coc_global_extensions = [
     \ 'coc-marketplace',
     \ 'coc-json',
-    \ 'coc-vimlsp']
+    \ 'coc-vimlsp',
+    \ 'coc-clangd',
+    \ 'coc-explorer',
+    \ 'coc-snippets',
+    \ 'coc-pairs',
+    \ 'coc-java']
 " avoid print messages when complete
 set shortmess+=c
 " make TAB work
@@ -88,3 +99,23 @@ function! CheckBackspace() abort
   let col = col('.') - 1
   return !col || getline('.')[col - 1]  =~# '\s'
 endfunction
+" Make <CR> to accept selected completion item or notify coc.nvim to format
+" <C-g>u breaks current undo, please make your own choice.
+inoremap <silent><expr> <CR> coc#pum#visible() ? coc#pum#confirm()
+    \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
+" Use `[g` and `]g` to navigate diagnostics
+" Use `:CocDiagnostics` to get all diagnostics of current buffer in location list.
+nmap <silent> [g <Plug>(coc-diagnostic-prev)
+nmap <silent> ]g <Plug>(coc-diagnostic-next)
+" GoTo code navigation.
+nmap <silent> gd <Plug>(coc-definition)
+nmap <silent> gy <Plug>(coc-type-definition)
+nmap <silent> gi <Plug>(coc-implementation)
+nmap <silent> gr <Plug>(coc-references)
+
+" Symbol renaming.
+nmap <space>rn <Plug>(coc-rename)
+" coc-explorer
+nmap <space>e <Cmd>CocCommand explorer<CR>
+" coc-snippets
+let g:coc_snippet_next = '<tab>'
