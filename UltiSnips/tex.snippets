@@ -1,4 +1,7 @@
+# Most part of this is modified form gillescastel
+
 # global setting
+
 ## detect context
 global !p
 def math():
@@ -13,6 +16,7 @@ def fix_indent(snip):
     vim.eval('feedkeys("\<c-f>")')
 endglobal
 
+# template
 snippet template "Basic template" b
 % !TEX program = xelatex
 \documentclass[UTF8]{article}
@@ -27,6 +31,7 @@ snippet template "Basic template" b
 \usepackage{hyperref}
 \usepackage{cleveref}
 \usepackage{nameref}
+\usepackage{graphicx}
 
 % creat theorem types
 \newtheorem{theorem}{Theorem}

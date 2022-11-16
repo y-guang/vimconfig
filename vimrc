@@ -61,6 +61,7 @@ Plug 'SirVer/ultisnips'
 Plug 'sts10/vim-pink-moon'
 Plug 'airblade/vim-gitgutter'
 Plug 'lervag/vimtex'
+Plug 'img-paste-devs/img-paste.vim'
 call plug#end()
 
 " setting for plugins
@@ -96,3 +97,16 @@ colorscheme pink-moon
 
 " airblade/vim-gitgutter
 set updatetime=100 " update gitgutter info latency in term of ms
+
+" img-paste.vim
+autocmd FileType markdown,tex nmap <buffer><silent> <leader>i :call mdip#MarkdownClipboardImage()<CR>
+function! g:LatexPasteImageFun(relpath)
+    let l:ref = substitute(a:relpath, "[^a-zA-Z0-9]", "_", "g")
+    execute "normal! i\\begin{figure}\r\\centering\r\\includegraphics[width=0.8\\textwidth]{" . a:relpath . "}\r\\caption{I"
+    let ipos = getcurpos()
+    execute "normal! a" . "mage}\r\\label{fig:" . l:ref . "}\r\\end{figure}"
+    call setpos('.', ipos)
+    execute "normal! ve\<C-g>"
+endfunction
+autocmd FileType markdown let g:PasteImageFunction = 'g:MarkdownPasteImage'
+autocmd FileType tex let g:PasteImageFunction = 'g:LatexPasteImageFun'
