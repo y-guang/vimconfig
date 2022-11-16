@@ -39,6 +39,7 @@ set guifontwide=Microsoft_YaHei_Mono:h12 " for Chinese
 " mapping
 "---------------------
 if has("win32") " detect windows env
+    winpos 0 0
 endif
 
 if has("nvim") " detect neovim env
@@ -55,67 +56,43 @@ imap <C-S-v> <C-r><C-o>+
 " plugin
 "---------------------
 call plug#begin()
-" Plug 'SirVer/ultisnips'
+Plug 'SirVer/ultisnips'
 " theme
 Plug 'sts10/vim-pink-moon'
 Plug 'airblade/vim-gitgutter'
-Plug 'neoclide/coc.nvim', {'branch': 'release'}
+Plug 'lervag/vimtex'
 call plug#end()
 
 " setting for plugins
 " SirVer/ultisnips
-" let g:UltiSnipsExpandTrigger = '<tab>'
-" let g:UltiSnipsJumpForwardTrigger = '<tab>'
-" let g:UltiSnipsJumpBackwardTrigger = '<s-tab>'
-" if has("win32") " detect windows env
-"     " keep UltiSnips allow auto-detect third-party's snippet
-"     let g:UltiSnipsSnippetDirectories=["UltiSnips", $HOME.'vimfiles/UltiSnips'] 
-" endif
+let g:UltiSnipsExpandTrigger = '<tab>'
+let g:UltiSnipsJumpForwardTrigger = '<tab>'
+let g:UltiSnipsJumpBackwardTrigger = '<s-tab>'
+if has("win32") " detect windows env
+    " keep UltiSnips allow auto-detect third-party's snippet
+    let g:UltiSnipsSnippetDirectories=["UltiSnips", $HOME.'/vimfiles/UltiSnips'] 
+endif
+
+" Plug 'lervag/vimtex'
+let g:vimtex_latexmk_option='pdf -pdflatex="xelatex -synctex=1 \%S \%O" -verbose -file-line-error -interaction=nonstopmode'
+let g:tex_flaver='latex'
+    let g:vimtex_compiler_latexmk_engines = {
+        \ '_'                : '-pdf',
+        \ 'pdflatex'         : '-pdf',
+        \ 'dvipdfex'         : '-pdfdvi',
+        \ 'lualatex'         : '-lualatex',
+        \ 'xelatex'          : '-xelatex',
+        \ 'context (pdftex)' : '-pdf -pdflatex=texexec',
+        \ 'context (luatex)' : '-pdf -pdflatex=context',
+        \ 'context (xetex)'  : '-pdf -pdflatex=''texexec --xtx''',
+        \}
+let g:vimtex_view_general_viewer = $HOME.'\AppData\Local\SumatraPDF\SumatraPDF.exe'
+let g:vimtex_quickfix_mode=0  
+set conceallevel=1 
+let g:tex_conceal='abdmg'
+
 " sts10/vim-pink-moon
 colorscheme pink-moon
+
 " airblade/vim-gitgutter
 set updatetime=100 " update gitgutter info latency in term of ms
-" neoclide/coc.nvim
-let g:coc_global_extensions = [
-    \ 'coc-marketplace',
-    \ 'coc-json',
-    \ 'coc-vimlsp',
-    \ 'coc-clangd',
-    \ 'coc-explorer',
-    \ 'coc-snippets',
-    \ 'coc-pairs',
-    \ 'coc-java']
-" avoid print messages when complete
-set shortmess+=c
-" make TAB work
-inoremap <silent><expr> <TAB>
-    \ coc#pum#visible() ? coc#pum#next(1) :
-    \ CheckBackspace() ? "\<Tab>" :
-    \ coc#refresh()
-inoremap <expr><S-TAB> coc#pum#visible() ? coc#pum#prev(1) : "\<C-h>"
-" pop up coc with ctrl + o
-inoremap <silent><expr> <c-o> coc#refresh()
-function! CheckBackspace() abort
-  let col = col('.') - 1
-  return !col || getline('.')[col - 1]  =~# '\s'
-endfunction
-" Make <CR> to accept selected completion item or notify coc.nvim to format
-" <C-g>u breaks current undo, please make your own choice.
-inoremap <silent><expr> <CR> coc#pum#visible() ? coc#pum#confirm()
-    \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
-" Use `[g` and `]g` to navigate diagnostics
-" Use `:CocDiagnostics` to get all diagnostics of current buffer in location list.
-nmap <silent> [g <Plug>(coc-diagnostic-prev)
-nmap <silent> ]g <Plug>(coc-diagnostic-next)
-" GoTo code navigation.
-nmap <silent> gd <Plug>(coc-definition)
-nmap <silent> gy <Plug>(coc-type-definition)
-nmap <silent> gi <Plug>(coc-implementation)
-nmap <silent> gr <Plug>(coc-references)
-
-" Symbol renaming.
-nmap <space>rn <Plug>(coc-rename)
-" coc-explorer
-nmap <space>e <Cmd>CocCommand explorer<CR>
-" coc-snippets
-let g:coc_snippet_next = '<tab>'
