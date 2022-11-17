@@ -23,6 +23,7 @@ set scrolloff=3
 
 set backspace=indent,eol,start " can delete eol ect.
 set hidden "no promote for buffer shift
+set wildignorecase "ignore case when complete filename
 
 "---------------------
 " appearance 
@@ -34,6 +35,8 @@ set relativenumber
 " font
 set guifont=JetBrains_Mono:h12 " for English
 set guifontwide=Microsoft_YaHei_Mono:h12 " for Chinese
+set guioptions-=m  "remove menu bar
+set guioptions-=T  "remove toolbar
 
 "---------------------
 " mapping
@@ -56,24 +59,15 @@ imap <C-S-v> <C-r><C-o>+
 " plugin
 "---------------------
 call plug#begin()
-Plug 'SirVer/ultisnips'
-" theme
-Plug 'sts10/vim-pink-moon'
-Plug 'airblade/vim-gitgutter'
-Plug 'lervag/vimtex'
-Plug 'img-paste-devs/img-paste.vim'
+Plug 'sts10/vim-pink-moon' " theme
+Plug 'airblade/vim-gitgutter' " git status for line
+Plug 'lervag/vimtex' " tex support
+Plug 'img-paste-devs/img-paste.vim' " paste image into file
+Plug 'neoclide/coc.nvim', {'branch': 'release'} " coc
+Plug 'jiangmiao/auto-pairs'
 call plug#end()
 
 " setting for plugins
-" SirVer/ultisnips
-let g:UltiSnipsExpandTrigger = '<tab>'
-let g:UltiSnipsJumpForwardTrigger = '<tab>'
-let g:UltiSnipsJumpBackwardTrigger = '<s-tab>'
-if has("win32") " detect windows env
-    " keep UltiSnips allow auto-detect third-party's snippet
-    let g:UltiSnipsSnippetDirectories=["UltiSnips", $HOME.'/vimfiles/UltiSnips'] 
-endif
-
 " Plug 'lervag/vimtex'
 let g:vimtex_latexmk_option='pdf -pdflatex="xelatex -synctex=1 \%S \%O" -verbose -file-line-error -interaction=nonstopmode'
 let g:tex_flaver='latex'
@@ -89,7 +83,7 @@ let g:tex_flaver='latex'
         \}
 let g:vimtex_view_general_viewer = $HOME.'\AppData\Local\SumatraPDF\SumatraPDF.exe'
 let g:vimtex_quickfix_mode=0  
-set conceallevel=1 
+set conceallevel=0
 let g:tex_conceal='abdmg'
 
 " sts10/vim-pink-moon
@@ -110,3 +104,60 @@ function! g:LatexPasteImageFun(relpath)
 endfunction
 autocmd FileType markdown let g:PasteImageFunction = 'g:MarkdownPasteImage'
 autocmd FileType tex let g:PasteImageFunction = 'g:LatexPasteImageFun'
+
+" neoclide/coc.nvim
+let g:coc_global_extensions = [
+            \ 'coc-snippets',
+            \ 'coc-vimlsp',
+            \ 'coc-json']
+set shortmess+=c " avoid print messages when complete
+" allow tab to complete
+inoremap <silent><expr> <TAB>
+      \ coc#pum#visible() ? coc#pum#next(1) :
+      \ CheckBackspace() ? "\<Tab>" :
+      \ coc#refresh()
+inoremap <expr><S-TAB> coc#pum#visible() ? coc#pum#prev(1) : "\<C-h>"
+inoremap <silent><expr> <CR> coc#pum#visible() ? coc#pum#confirm()
+                              \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
+function! CheckBackspace() abort
+  let col = col('.') - 1
+  return !col || getline('.')[col - 1]  =~# '\s'
+endfunction
+" navigate diagnostics
+nmap <silent> <leader>- <Plug>(coc-diagnostic-prev)
+nmap <silent> <leader>+ <Plug>(coc-diagnostic-next)
+" GoTo code navigation.
+nmap <silent> gd <Plug>(coc-definition)
+nmap <silent> gy <Plug>(coc-type-definition)
+nmap <silent> gi <Plug>(coc-implementation)
+nmap <silent> gr <Plug>(coc-references)
+" Use <leader>h to show documentation in preview window.
+nnoremap <silent> <leader>h :call ShowDocumentation()<CR>
+function! ShowDocumentation()
+  if CocAction('hasProvider', 'hover')
+    call CocActionAsync('doHover')
+  else
+    call feedkeys('K', 'in')
+  endif
+endfunction
+" Highlight the symbol and its references when holding the cursor.
+autocmd CursorHold * silent call CocActionAsync('highlight')
+
+" Plug 'jiangmiao/auto-pairs'
+au FileType tex let b:AutoPairs = AutoPairsDefine({'$' : '$', '$$' : '$$'}, )
+
+" Plug 'jiangmiao/auto-pairs'
+let g:gitgutter_map_keys = 0
+let g:gitgutter_preview_win_floating = 1
+let g:gitgutter_sign_added = '▎'
+let g:gitgutter_sign_modified = '░'
+let g:gitgutter_sign_removed = '▏'
+let g:gitgutter_sign_removed_first_line = '▔'
+let g:gitgutter_sign_modified_removed = '▒'
+highlight GitGutterAdd    guifg=#009900 ctermfg=2
+highlight GitGutterChange guifg=#bbbb00 ctermfg=3
+highlight GitGutterDelete guifg=#ff2222 ctermfg=1
+nnoremap <LEADER>gf :GitGutterFold<CR>
+nnoremap H :GitGutterPreviewHunk<CR>
+nnoremap <LEADER>g- :GitGutterPrevHunk<CR>
+nnoremap <LEADER>g= :GitGutterNextHunk<CR>
