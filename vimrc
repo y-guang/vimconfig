@@ -83,6 +83,7 @@ Plug 'tpope/vim-surround'
 Plug 'svermeulen/vim-subversive' " support substitute
 Plug 'luochen1990/rainbow' " rainbow parentheses
 Plug 'Yggdroot/indentLine' " indent hint
+Plug 'justinmk/vim-sneak' " quick motion
 call plug#end()
 
 " setting for plugins
@@ -127,7 +128,8 @@ autocmd FileType tex let g:PasteImageFunction = 'g:LatexPasteImageFun'
 let g:coc_global_extensions = [
             \ 'coc-snippets',
             \ 'coc-vimlsp',
-            \ 'coc-json']
+            \ 'coc-json',
+            \ 'coc-clangd']
 set shortmess+=c " avoid print messages when complete
 " allow tab to complete
 inoremap <silent><expr> <TAB>
@@ -191,7 +193,7 @@ let g:wildfire_objects = {
 \ }
 
 " Plug 'luochen1990/rainbow'
-" let g:rainbow_active = 0
+let g:rainbow_active = 1
 	let g:rainbow_conf = {
 	\	'guifgs': ['royalblue2', 'darkorange2', 'seagreen2', 'firebrick2'],
 	\	'ctermfgs': ['lightblue', 'lightyellow', 'lightcyan', 'lightmagenta'],
@@ -215,3 +217,9 @@ let g:wildfire_objects = {
 	\		'nerdtree': 0,
 	\	}
 	\}
+
+" Plug 'justinmk/vim-sneak'
+map f <Plug>Sneak_s
+map F <Plug>Sneak_S
+let g:sneak#label = 1
+
