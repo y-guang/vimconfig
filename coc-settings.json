@@ -1,4 +1,5 @@
 {
     "coc.preferences.extensionUpdateCheck": "weekly",
-    "suggest.noselect": true
+    "suggest.noselect": true,
+    "marketplace.npmsio": true
 }

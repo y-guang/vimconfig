@@ -42,7 +42,6 @@ set guioptions-=T  "remove toolbar
 " mapping
 "---------------------
 if has("win32") " detect windows env
-    winpos 0 0
 endif
 
 if has("nvim") " detect neovim env
@@ -54,6 +53,18 @@ vmap <C-S-c> "+yi
 vmap <C-S-x> "+c
 vmap <C-S-v> c<ESC>"+p
 imap <C-S-v> <C-r><C-o>+
+" remove annoy scan
+map <C-n> <Nop>
+
+" ---------------------
+" system related
+"---------------------
+if has("win32") " detect windows env
+    winpos 0 0 " open 
+    let $HOSTFILE="C:\\Windows\\System32\\drivers\\etc\\hosts"
+    let $VIMFILES=$HOME . '\vimfiles'
+endif
+
 
 "---------------------
 " plugin
@@ -64,7 +75,14 @@ Plug 'airblade/vim-gitgutter' " git status for line
 Plug 'lervag/vimtex' " tex support
 Plug 'img-paste-devs/img-paste.vim' " paste image into file
 Plug 'neoclide/coc.nvim', {'branch': 'release'} " coc
+" editor enhance
 Plug 'jiangmiao/auto-pairs'
+Plug 'gcmt/wildfire.vim' " allow quick select closest text object
+Plug 'junegunn/vim-after-object' " text-obj after
+Plug 'tpope/vim-surround'
+Plug 'svermeulen/vim-subversive' " support substitute
+Plug 'luochen1990/rainbow' " rainbow parentheses
+Plug 'Yggdroot/indentLine' " indent hint
 call plug#end()
 
 " setting for plugins
@@ -161,3 +179,39 @@ nnoremap <LEADER>gf :GitGutterFold<CR>
 nnoremap H :GitGutterPreviewHunk<CR>
 nnoremap <LEADER>g- :GitGutterPrevHunk<CR>
 nnoremap <LEADER>g= :GitGutterNextHunk<CR>
+
+" Plug 'junegunn/vim-after-object'
+autocmd VimEnter * call after_object#enable('=', ':', '-', '#', ' ')
+
+" Plug 'tpope/vim-surround'
+" Plug 'gcmt/wildfire.vim'
+let g:wildfire_objects = {
+    \ "*" : ["i'", 'i"', "i)", "i]", "i}", "it"],
+    \ "html,xml" : ["at", "it"],
+\ }
+
+" Plug 'luochen1990/rainbow'
+" let g:rainbow_active = 0
+	let g:rainbow_conf = {
+	\	'guifgs': ['royalblue2', 'darkorange2', 'seagreen2', 'firebrick2'],
+	\	'ctermfgs': ['lightblue', 'lightyellow', 'lightcyan', 'lightmagenta'],
+	\	'operators': '_,_',
+	\	'parentheses': ['start=/(/ end=/)/ fold', 'start=/\[/ end=/\]/ fold', 'start=/{/ end=/}/ fold'],
+	\	'separately': {
+	\		'*': {},
+	\		'tex': {
+	\			'parentheses': ['start=/(/ end=/)/', 'start=/\[/ end=/\]/',],
+	\		},
+	\		'lisp': {
+	\			'guifgs': ['royalblue2', 'darkorange2', 'seagreen2', 'firebrick2', 'darkorchid2'],
+	\		},
+	\		'vim': {
+	\			'parentheses': ['start=/(/ end=/)/', 'start=/\[/ end=/\]/', 'start=/{/ end=/}/ fold', 'start=/(/ end=/)/ containedin=vimFuncBody', 'start=/\[/ end=/\]/ containedin=vimFuncBody', 'start=/{/ end=/}/ fold containedin=vimFuncBody'],
+	\		},
+	\		'html': {
+	\			'parentheses': ['start=/\v\<((area|base|br|col|embed|hr|img|input|keygen|link|menuitem|meta|param|source|track|wbr)[ >])@!\z([-_:a-zA-Z0-9]+)(\s+[-_:a-zA-Z0-9]+(\=("[^"]*"|'."'".'[^'."'".']*'."'".'|[^ '."'".'"><=`]*))?)*\>/ end=#</\z1># fold'],
+	\		},
+	\		'css': 0,
+	\		'nerdtree': 0,
+	\	}
+	\}
