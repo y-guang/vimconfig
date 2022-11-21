@@ -63,6 +63,9 @@ if has("win32") " detect windows env
     winpos 0 0 " open 
     let $HOSTFILE="C:\\Windows\\System32\\drivers\\etc\\hosts"
     let $VIMFILES=$HOME . '\vimfiles'
+    " allow window to use powershell run command
+    set shell=powershell
+    set shellcmdflag=-command
 endif
 
 
@@ -84,6 +87,10 @@ Plug 'svermeulen/vim-subversive' " support substitute
 Plug 'luochen1990/rainbow' " rainbow parentheses
 Plug 'Yggdroot/indentLine' " indent hint
 Plug 'justinmk/vim-sneak' " quick motion
+Plug 'reedes/vim-wordy' " spell check
+Plug 'RRethy/vim-illuminate' " highlight
+Plug 'junegunn/vim-easy-align' 
+Plug 'liuchengxu/vim-which-key'
 call plug#end()
 
 " setting for plugins
@@ -129,7 +136,8 @@ let g:coc_global_extensions = [
             \ 'coc-snippets',
             \ 'coc-vimlsp',
             \ 'coc-json',
-            \ 'coc-clangd']
+            \ 'coc-clangd',
+            \ 'coc-powershell']
 set shortmess+=c " avoid print messages when complete
 " allow tab to complete
 inoremap <silent><expr> <TAB>
@@ -161,7 +169,7 @@ function! ShowDocumentation()
   endif
 endfunction
 " Highlight the symbol and its references when holding the cursor.
-autocmd CursorHold * silent call CocActionAsync('highlight')
+" autocmd CursorHold * silent call CocActionAsync('highlight')
 
 " Plug 'jiangmiao/auto-pairs'
 au FileType tex let b:AutoPairs = AutoPairsDefine({'$' : '$', '$$' : '$$'}, )
@@ -223,3 +231,91 @@ map f <Plug>Sneak_s
 map F <Plug>Sneak_S
 let g:sneak#label = 1
 
+" Plug 'RRethy/vim-illuminate'
+let g:Illuminate_delay = 500
+hi illuminatedWord cterm=underline gui=underline
+
+" Plug 'junegunn/vim-easy-align'
+" Start interactive EasyAlign in visual mode (e.g. vipga)
+xmap ga <Plug>(EasyAlign)
+" Start interactive EasyAlign for a motion/text object (e.g. gaip)
+nmap ga <Plug>(EasyAlign)
+
+" Plug 'liuchengxu/vim-which-key'
+nnoremap <silent> <leader> :<c-u>WhichKey '<Space>'<CR>
+vnoremap <silent> <leader> :<c-u>WhichKeyVisual '<Space>'<CR>
+let g:which_key_map = {}
+let g:which_key_map.g = { 'name' : '+-gutter' }
+let g:which_key_map.k = { 'name' : '+keymap' }
+let g:which_key_map.k.g = {'name' : '+g附加指令',
+            \ 'd' : 'definition',
+            \ 'r' : 'references',
+            \ 'y' : 'type-definition',
+            \ 'i' : 'implementation',
+            \ }
+let g:which_key_map.k.c = {'name' : '+ctrl',
+            \ 'v' : '可视块',
+            \ 'r' : 'redo',
+            \ 'j' : '下一占位符',
+            \ 'k' : '上一占位符',
+            \ }
+" default keymap
+let g:which_key_map.k.d = { 'name' : '+default keymap',
+            \ '~' : '大小写转换',
+            \ '!' : '外部过滤器',
+            \ '@' : '运行宏',
+            \ '#' : '上一相同ch',
+            \ '$' : '行尾',
+            \ '%' : '至匹配括号',
+            \ '^' : '行首(非空)',
+            \ '&' : '重复:s',
+            \ '*' : '下一相同ch',
+            \ '(' : '句首',
+            \ ')' : '下一句首',
+            \ '-' : '前一行首',
+            \ '_' : '行首(非空)',
+            \ '+' : '后一行首',
+            \ '=' : '自动格式化',
+            \ 'q' : '录制宏',
+            \ 'Q' : 'ex模式',
+            \ 'w/W' : 'next[w/W]',
+            \ 'e/E' : 'end[w/W]',
+            \ 'r' : 'replace',
+            \ 'R' : '替换模式',
+            \ 't' : 'till',
+            \ 'y/Y' : 'yank[/整行]',
+            \ 'u/U' : 'undo[/行内]',
+            \ 'i/I' : '插入[/行首]',
+            \ 'o/O' : '新行[后/前]',
+            \ 'p/P' : 'paste[后/行前]',
+            \ '{' : '段首',
+            \ '}' : '段尾',
+            \ 'a/A' : '附加[/行尾]',
+            \ 's/S' : 'switch[/行]',
+            \ 'd' : '删除[/行]',
+            \ 'f' : '快速定位',
+            \ 'g' : g:which_key_map.k.g,
+            \ 'G' : '文尾',
+            \ 'H' : '屏幕顶行',
+            \ 'J' : '合并两行',
+            \ 'K' : '帮助',
+            \ 'L' : '屏幕底行',
+            \ ':' : 'ex命令',
+            \ ';' : '重复定位',
+            \ '"' : "寄存器",
+            \ "'" : "到标注行首",
+            \ '|' : '行首',
+            \ 'Z' : '退出',
+            \ 'x/X' : '删除[/上个]字符',
+            \ 'c/C' : '修改[/至行尾]',
+            \ 'v/V' : '可视[/行]模式',
+            \ 'b/B' : '前一[w/W]',
+            \ 'n/N' : '[下/上]一查找',
+            \ 'm' : '设置标注',
+            \ 'M' : '屏幕中间行',
+            \ '</>' : '[反/]缩进',
+            \ ',' : '反向重复定位',
+            \ '.' : '重复命令',
+            \ '/?' : '向[后/前]搜索',
+            \ }
+call which_key#register('<Space>', "g:which_key_map")
