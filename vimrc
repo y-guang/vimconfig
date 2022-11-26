@@ -24,7 +24,7 @@ set scrolloff=3
 set backspace=indent,eol,start " can delete eol ect.
 set hidden "no promote for buffer shift
 set wildignorecase "ignore case when complete filename
-
+set nrformats= " treat all num as dec
 "---------------------
 " appearance 
 "---------------------
@@ -64,8 +64,8 @@ if has("win32") " detect windows env
     let $HOSTFILE="C:\\Windows\\System32\\drivers\\etc\\hosts"
     let $VIMFILES=$HOME . '\vimfiles'
     " allow window to use powershell run command
-    set shell=powershell
-    set shellcmdflag=-command
+"    set shell=powershell
+"    set shellcmdflag=-command " it will disturb the latex compilation
 endif
 
 
@@ -85,28 +85,32 @@ Plug 'junegunn/vim-after-object' " text-obj after
 Plug 'tpope/vim-surround'
 Plug 'svermeulen/vim-subversive' " support substitute
 Plug 'luochen1990/rainbow' " rainbow parentheses
-Plug 'Yggdroot/indentLine' " indent hint
+" Plug 'Yggdroot/indentLine' " indent hint, however, disturb conceal
 Plug 'justinmk/vim-sneak' " quick motion
 Plug 'reedes/vim-wordy' " spell check
 Plug 'RRethy/vim-illuminate' " highlight
 Plug 'junegunn/vim-easy-align' 
 Plug 'liuchengxu/vim-which-key'
+Plug 'tpope/vim-commentary'
 call plug#end()
 
 " setting for plugins
 " Plug 'lervag/vimtex'
 let g:vimtex_latexmk_option='pdf -pdflatex="xelatex -synctex=1 \%S \%O" -verbose -file-line-error -interaction=nonstopmode'
 let g:tex_flaver='latex'
-    let g:vimtex_compiler_latexmk_engines = {
-        \ '_'                : '-pdf',
-        \ 'pdflatex'         : '-pdf',
-        \ 'dvipdfex'         : '-pdfdvi',
-        \ 'lualatex'         : '-lualatex',
-        \ 'xelatex'          : '-xelatex',
-        \ 'context (pdftex)' : '-pdf -pdflatex=texexec',
-        \ 'context (luatex)' : '-pdf -pdflatex=context',
-        \ 'context (xetex)'  : '-pdf -pdflatex=''texexec --xtx''',
-        \}
+let g:vimtex_compiler_latexmk_engines = {
+    \ '_'                : '-pdf',
+    \ 'pdflatex'         : '-pdf',
+    \ 'dvipdfex'         : '-pdfdvi',
+    \ 'lualatex'         : '-lualatex',
+    \ 'xelatex'          : '-xelatex',
+    \ 'context (pdftex)' : '-pdf -pdflatex=texexec',
+    \ 'context (luatex)' : '-pdf -pdflatex=context',
+    \ 'context (xetex)'  : '-pdf -pdflatex=''texexec --xtx''',
+    \}
+let g:vimtex_compiler_latexmk = {
+            \ 'build_dir' : 'build',
+            \}
 let g:vimtex_view_general_viewer = $HOME.'\AppData\Local\SumatraPDF\SumatraPDF.exe'
 let g:vimtex_quickfix_mode=0  
 set conceallevel=0
@@ -122,7 +126,7 @@ set updatetime=100 " update gitgutter info latency in term of ms
 autocmd FileType markdown,tex nmap <buffer><silent> <leader>i :call mdip#MarkdownClipboardImage()<CR>
 function! g:LatexPasteImageFun(relpath)
     let l:ref = substitute(a:relpath, "[^a-zA-Z0-9]", "_", "g")
-    execute "normal! i\\begin{figure}\r\\centering\r\\includegraphics[width=0.8\\textwidth]{" . a:relpath . "}\r\\caption{I"
+    execute "normal! i\\begin{figure}[htbp]\r\\centering\r\\includegraphics[width=0.8\\textwidth]{" . a:relpath . "}\r\\caption{I"
     let ipos = getcurpos()
     execute "normal! a" . "mage}\r\\label{fig:" . l:ref . "}\r\\end{figure}"
     call setpos('.', ipos)
@@ -171,8 +175,12 @@ endfunction
 " Highlight the symbol and its references when holding the cursor.
 " autocmd CursorHold * silent call CocActionAsync('highlight')
 
+" coc-snippets
+let g:coc_snippet_next = '<c-j>'
+let g:coc_snippet_prev = '<c-k>'
+
 " Plug 'jiangmiao/auto-pairs'
-au FileType tex let b:AutoPairs = AutoPairsDefine({'$' : '$', '$$' : '$$'}, )
+au FileType tex let b:AutoPairs = AutoPairsDefine({'$' : '$', '$$' : '$$'}, ["'", "'''"])
 
 " Plug 'jiangmiao/auto-pairs'
 let g:gitgutter_map_keys = 0
@@ -252,12 +260,20 @@ let g:which_key_map.k.g = {'name' : '+g附加指令',
             \ 'r' : 'references',
             \ 'y' : 'type-definition',
             \ 'i' : 'implementation',
+            \ 'u/U' : '[小/大]写'
             \ }
 let g:which_key_map.k.c = {'name' : '+ctrl',
             \ 'v' : '可视块',
             \ 'r' : 'redo',
             \ 'j' : '下一占位符',
             \ 'k' : '上一占位符',
+            \ }
+let g:which_key_map.k.c.w = {'name' : '+windows',
+            \ 'h/j/k/l' : "移动窗口",
+            \ 'v' : "垂直分割",
+            \ 's' : '水平分割',
+            \ 'c' : '关闭窗口',
+            \ 'o' : '关闭其他窗口',
             \ }
 " default keymap
 let g:which_key_map.k.d = { 'name' : '+default keymap',
@@ -319,3 +335,6 @@ let g:which_key_map.k.d = { 'name' : '+default keymap',
             \ '/?' : '向[后/前]搜索',
             \ }
 call which_key#register('<Space>', "g:which_key_map")
+
+" Plug 'tpope/vim-commentary'
+" autocmd FileType apache setlocal commentstring=#\ %s
